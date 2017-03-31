@@ -1,0 +1,77 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="~/Content/Styles/Site.css" />
+</head>
+<body>
+    <div id="Field" style="border: black solid 2px; margin: 30px; height: 70%; position: relative;">
+        <div style="float: right;">
+            <button id="Resume">Resume</button>
+            <button id="Pause">Pause</button>
+            <span id="Timer"></span> Seconds
+            <br/>
+            X: <input id="SpeedX" value="10" />px/sec
+            Y: <input id="SpeedY" value="10" />px/sec
+            Radial: <input id="SpeedRadial" value="10" />deg/sec
+            <button id="ChangeSpeed">Change speed</button>
+        </div>
+        <div id="Soldier" style="position: absolute; left: 100px; top: 100px;"><img src="~/Asserts/Soldier/Soldier.png" style="width: 100px;" /></div>
+    </div>
+    <script type="text/javascript" src="~/Scripts/Libraries/jQuery/jquery.js"></script>
+    <script type="text/javascript" src="~/Scripts/Libraries/Linq/linq.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/OOPExtensions.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/TransformationExtensions.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/Game/GameEngine.js"></script>
+    <script type="text/javascript" src="~/Scripts/Game/SceneObject.js"></script>
+    <script type="text/javascript" src="~/Scripts/Game/Scene.js"></script>
+    <script type="text/javascript" src="~/Scripts/Game/DynamicObject.js"></script>
+    <script type="text/javascript" src="~/Scripts/Game/SoldierObject.js"></script>
+    <script type="text/javascript" src="~/Scripts/Game/Game.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var game = new Game({
+                SceneElementSelector: "#Field",
+                InitializeScene: function (scene) {
+                    var soldier = new SoldierObject({ ObjectSelector: "#Soldier", GunPosition: { Start: { X: 160, Y: 212 }, End: { X: 340, Y: 212 } } });
+                    scene.Root.AddChild(soldier);
+                    scene.Soldier = soldier;
+                }
+            });
+
+
+            var second;
+            game.OnTick(function (d) {
+                var currentSecodns = Math.round(d / 1000);
+                if (currentSecodns != second) {
+                    second = currentSecodns;
+                    $("#Timer").text(second);
+                }
+            });
+
+            $("#Pause").click(function () { game.Pause(); });
+            $("#Resume").click(function () { game.Resume(); });
+            $("#ChangeSpeed").click(function () {
+                var speedX = Number($("#SpeedX").val());
+                var speedY = Number($("#SpeedY").val());
+                var speedRadial = Number($("#SpeedRadial").val());
+
+                game.Scene.Soldier.SetSpeed(speedX, speedY, speedRadial);
+            });
+
+            game.Start();
+        });
+    </script>
+</body>
+</html>
